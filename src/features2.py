@@ -2,6 +2,7 @@ import numpy as np
 import mne
 import glob
 import pandas as pd
+from scipy.stats import entropy
 
 
 
@@ -53,8 +54,15 @@ for file in EC_files:
         max_val = np.max(window, axis=1)
         min_val = np.min(window, axis=1)
         mean_val = np.mean(window, axis=1)
-        print(max_val, min_val, mean_val)
-        feature_list.append(np.concatenate([max_val, min_val, mean_val]))
+        #variance
+        var_val = np.var(window, axis=1)
+        #range
+        range_val = max_val - min_val
+        entropy_fp1 = entropy(np.abs(window[0]))
+        entropy_fp2 = entropy(np.abs(window[1]))
+        entropy_val = np.array([entropy_fp1, entropy_fp2])
+        print(max_val, min_val, mean_val, var_val, range_val, entropy_val)
+        feature_list.append(np.concatenate([max_val, min_val, mean_val, var_val, range_val, entropy_val]))
         label_list.append(label)
 
     features_array = np.array(feature_list)
